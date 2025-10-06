@@ -1,7 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Animated,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -23,6 +24,32 @@ export default function ForgotPasswordScreen({
 }: ForgotPasswordScreenProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Animation values
+  const [headerAnim] = useState(new Animated.Value(0));
+  const [formAnim] = useState(new Animated.Value(0));
+  const [footerAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    // Entrance animations
+    Animated.stagger(200, [
+      Animated.timing(headerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(formAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(footerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const handleResetPassword = async () => {
     if (!email) {
@@ -46,7 +73,8 @@ export default function ForgotPasswordScreen({
 
   return (
     <LinearGradient
-      colors={["#000000", "#1a1a1a", "#000000"]}
+      colors={["#000000", "#1a1a1a", "#2a2a2a", "#1a1a1a", "#000000"]}
+      locations={[0, 0.3, 0.5, 0.7, 1]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
@@ -56,16 +84,46 @@ export default function ForgotPasswordScreen({
         >
           <View style={styles.content}>
             {/* Header */}
-            <View style={styles.header}>
+            <Animated.View
+              style={[
+                styles.header,
+                {
+                  opacity: headerAnim,
+                  transform: [
+                    {
+                      translateY: headerAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <Text style={styles.title}>Reset Password</Text>
               <Text style={styles.subtitle}>
                 Enter your email address and we'll send you a link to reset your
                 password.
               </Text>
-            </View>
+            </Animated.View>
 
             {/* Form */}
-            <View style={styles.form}>
+            <Animated.View
+              style={[
+                styles.form,
+                {
+                  opacity: formAnim,
+                  transform: [
+                    {
+                      translateY: formAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Email</Text>
                 <TextInput
@@ -92,14 +150,29 @@ export default function ForgotPasswordScreen({
                   {loading ? "Sending..." : "Send Reset Link"}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
 
             {/* Footer */}
-            <View style={styles.footer}>
+            <Animated.View
+              style={[
+                styles.footer,
+                {
+                  opacity: footerAnim,
+                  transform: [
+                    {
+                      translateY: footerAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <TouchableOpacity onPress={onNavigateBack}>
                 <Text style={styles.backLink}>Back to Sign In</Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

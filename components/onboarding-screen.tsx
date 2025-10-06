@@ -43,8 +43,16 @@ function DynamicBackground({ uri }: { uri?: string }) {
 
 /* ---------- Card shown inside the carousel ---------- */
 export function GameCard({ game }: { game: Game }) {
+  const handlePress = () => {
+    router.push(`/game/${game.id}` as any);
+  };
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={handlePress}
+      activeOpacity={0.8}
+    >
       <Image source={game.image} style={styles.cardImage} resizeMode="cover" />
       <LinearGradient
         colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0, 0, 0, 0.55)"]}
@@ -56,7 +64,7 @@ export function GameCard({ game }: { game: Game }) {
           <Text style={styles.cardPrice}>{game.price}</Text>
         </View>
       </LinearGradient>
-    </View>
+    </TouchableOpacity>
   );
 }
 

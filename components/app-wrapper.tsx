@@ -1,10 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import AuthWrapper from "./auth/auth-wrapper";
-import HomeScreen from "./home/home-screen";
 import GameStoreHero from "./onboarding-screen";
+import TabLayout from "./tab-layout";
 
 type AppScreen = "onboarding" | "auth" | "home";
 
@@ -39,22 +38,7 @@ export default function AppWrapper() {
       case "auth":
         return <AuthWrapper onAuthSuccess={handleAuthSuccess} />;
       case "home":
-        return (
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                style={styles.menuButton}
-                onPress={() => navigation.openDrawer()}
-              >
-                <Ionicons name="menu" size={24} color="#FFFFFF" />
-              </TouchableOpacity>
-              <View style={styles.headerTitle}>
-                <Text style={styles.headerTitleText}>uMind</Text>
-              </View>
-            </View>
-            <HomeScreen onLogout={handleLogout} />
-          </View>
-        );
+        return <TabLayout onLogout={handleLogout} />;
       default:
         return null;
     }

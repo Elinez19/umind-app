@@ -1,5 +1,5 @@
-import AppWrapper from "../components/app-wrapper";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return <AppWrapper />;
+  return <Redirect href={"/(tabs)" as any} />;
 }

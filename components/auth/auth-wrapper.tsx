@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Animated, StyleSheet, View } from "react-native";
 import ForgotPasswordScreen from "./forgot-password-screen";
 import LoginScreen from "./login-screen";
 import SignupScreen from "./signup-screen";
@@ -12,6 +12,23 @@ interface AuthWrapperProps {
 
 export default function AuthWrapper({ onAuthSuccess }: AuthWrapperProps) {
   const [currentScreen, setCurrentScreen] = useState<AuthScreen>("login");
+  const [fadeAnim] = useState(new Animated.Value(1));
+
+  useEffect(() => {
+    // Trigger fade animation when screen changes
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [currentScreen]);
 
   const handleLogin = async (email: string, password: string) => {
     // Simulate login - replace with actual authentication logic
@@ -67,11 +84,20 @@ export default function AuthWrapper({ onAuthSuccess }: AuthWrapperProps) {
     }
   };
 
-  return <View style={styles.container}>{renderCurrentScreen()}</View>;
+  return (
+    <View style={styles.container}>
+      <Animated.View style={[styles.screenContainer, { opacity: fadeAnim }]}>
+        {renderCurrentScreen()}
+      </Animated.View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  screenContainer: {
     flex: 1,
   },
 });

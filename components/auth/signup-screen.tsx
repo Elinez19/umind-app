@@ -1,7 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Animated,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -26,6 +27,32 @@ export default function SignupScreen({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Animation values
+  const [headerAnim] = useState(new Animated.Value(0));
+  const [formAnim] = useState(new Animated.Value(0));
+  const [footerAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    // Entrance animations
+    Animated.stagger(200, [
+      Animated.timing(headerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(formAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(footerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const handleSignup = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -55,7 +82,8 @@ export default function SignupScreen({
 
   return (
     <LinearGradient
-      colors={["#000000", "#1a1a1a", "#000000"]}
+      colors={["#000000", "#1a1a1a", "#2a2a2a", "#1a1a1a", "#000000"]}
+      locations={[0, 0.3, 0.5, 0.7, 1]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
@@ -65,13 +93,43 @@ export default function SignupScreen({
         >
           <View style={styles.content}>
             {/* Header */}
-            <View style={styles.header}>
+            <Animated.View
+              style={[
+                styles.header,
+                {
+                  opacity: headerAnim,
+                  transform: [
+                    {
+                      translateY: headerAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <Text style={styles.title}>Create Account</Text>
               <Text style={styles.subtitle}>Sign up to get started</Text>
-            </View>
+            </Animated.View>
 
             {/* Form */}
-            <View style={styles.form}>
+            <Animated.View
+              style={[
+                styles.form,
+                {
+                  opacity: formAnim,
+                  transform: [
+                    {
+                      translateY: formAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Full Name</Text>
                 <TextInput
@@ -139,15 +197,30 @@ export default function SignupScreen({
                   {loading ? "Creating Account..." : "Create Account"}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
 
             {/* Footer */}
-            <View style={styles.footer}>
+            <Animated.View
+              style={[
+                styles.footer,
+                {
+                  opacity: footerAnim,
+                  transform: [
+                    {
+                      translateY: footerAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <Text style={styles.footerText}>Already have an account?</Text>
               <TouchableOpacity onPress={onNavigateToLogin}>
                 <Text style={styles.loginLink}>Sign In</Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

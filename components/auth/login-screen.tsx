@@ -1,7 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Animated,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -27,6 +28,32 @@ export default function LoginScreen({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Animation values
+  const [headerAnim] = useState(new Animated.Value(0));
+  const [formAnim] = useState(new Animated.Value(0));
+  const [footerAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    // Entrance animations
+    Animated.stagger(200, [
+      Animated.timing(headerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(formAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(footerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please fill in all fields");
@@ -45,7 +72,8 @@ export default function LoginScreen({
 
   return (
     <LinearGradient
-      colors={["#000000", "#1a1a1a", "#000000"]}
+      colors={["#000000", "#1a1a1a", "#2a2a2a", "#1a1a1a", "#000000"]}
+      locations={[0, 0.3, 0.5, 0.7, 1]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
@@ -55,13 +83,43 @@ export default function LoginScreen({
         >
           <View style={styles.content}>
             {/* Header */}
-            <View style={styles.header}>
+            <Animated.View
+              style={[
+                styles.header,
+                {
+                  opacity: headerAnim,
+                  transform: [
+                    {
+                      translateY: headerAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <Text style={styles.title}>Welcome Back</Text>
               <Text style={styles.subtitle}>Sign in to your account</Text>
-            </View>
+            </Animated.View>
 
             {/* Form */}
-            <View style={styles.form}>
+            <Animated.View
+              style={[
+                styles.form,
+                {
+                  opacity: formAnim,
+                  transform: [
+                    {
+                      translateY: formAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Email</Text>
                 <TextInput
@@ -109,15 +167,30 @@ export default function LoginScreen({
                   {loading ? "Signing In..." : "Sign In"}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
 
             {/* Footer */}
-            <View style={styles.footer}>
+            <Animated.View
+              style={[
+                styles.footer,
+                {
+                  opacity: footerAnim,
+                  transform: [
+                    {
+                      translateY: footerAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
               <Text style={styles.footerText}>Don't have an account?</Text>
               <TouchableOpacity onPress={onNavigateToSignup}>
                 <Text style={styles.signupLink}>Sign Up</Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

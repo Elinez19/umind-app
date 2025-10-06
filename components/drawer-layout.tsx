@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  ScrollView,
+  Animated,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -21,6 +22,32 @@ export default function CustomDrawerContent(
   props: DrawerContentComponentProps
 ) {
   const router = useRouter();
+
+  // Animation values
+  const [headerAnim] = useState(new Animated.Value(0));
+  const [menuAnim] = useState(new Animated.Value(0));
+  const [footerAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    // Entrance animations with staggered timing
+    Animated.stagger(200, [
+      Animated.timing(headerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(menuAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(footerAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
   const drawerItems: DrawerItem[] = [
     {
       id: "home",
@@ -60,13 +87,49 @@ export default function CustomDrawerContent(
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={["#000000", "#1a1a1a", "#2a2a2a", "#1a1a1a", "#000000"]}
+      locations={[0, 0.2, 0.5, 0.8, 1]}
+      style={styles.container}
+    >
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>uMind</Text>
-        <Text style={styles.headerSubtitle}>Premium Experience</Text>
+        <Animated.View
+          style={[
+            styles.headerContent,
+            {
+              opacity: headerAnim,
+              transform: [
+                {
+                  translateY: headerAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [50, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <Text style={styles.headerTitle}>uMind</Text>
+          <Text style={styles.headerSubtitle}>Premium Experience</Text>
+        </Animated.View>
       </View>
 
-      <ScrollView style={styles.menuContainer}>
+      <Animated.View
+        style={[
+          styles.menuContainer,
+          {
+            opacity: menuAnim,
+            transform: [
+              {
+                translateY: menuAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [50, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
         {drawerItems.map((item) => (
           <TouchableOpacity
             key={item.id}
@@ -78,19 +141,36 @@ export default function CustomDrawerContent(
             <Text style={styles.menuItemText}>{item.title}</Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </Animated.View>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleLogout}
-          activeOpacity={0.7}
+        <Animated.View
+          style={[
+            styles.footerContent,
+            {
+              opacity: footerAnim,
+              transform: [
+                {
+                  translateY: footerAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [50, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
         >
-          <Ionicons name="log-out-outline" size={24} color="#FFFFFF" />
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogout}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="log-out-outline" size={24} color="#FFFFFF" />
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -105,6 +185,9 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#333333",
+  },
+  headerContent: {
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 28,
@@ -141,6 +224,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#333333",
     paddingTop: 20,
+  },
+  footerContent: {
+    alignItems: "center",
   },
   logoutButton: {
     flexDirection: "row",
